@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>À propos — InflatioConvert</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --bg:#0d0f14; --surface:#161920; --surface2:#1d2029;
+      --border:rgba(255,255,255,.07); --border-h:rgba(255,255,255,.15);
+      --text:#f0ede8; --muted:#8a8f9e;
+      --accent:#5b8eff; --accent-bg:rgba(91,142,255,.12);
+      --teal:#2ecfad; --teal-bg:rgba(46,207,173,.1);
+      --amber:#f5a623;
+    }
+    body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+    nav { display:flex; align-items:center; justify-content:space-between; padding:0 2.5rem; height:60px; border-bottom:1px solid var(--border); background:rgba(13,15,20,.9); backdrop-filter:blur(14px); position:sticky; top:0; z-index:200; }
+    .nav-logo { font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:1.15rem; letter-spacing:-.02em; color:var(--text); text-decoration:none; }
+    .nav-logo span { color:var(--accent); }
+    .nav-links { display:flex; align-items:center; gap:.25rem; }
+    .nav-links a { color:var(--muted); text-decoration:none; font-size:.875rem; padding:.45rem .9rem; border-radius:8px; transition:color .2s,background .2s; }
+    .nav-links a:hover { color:var(--text); background:rgba(255,255,255,.05); }
+    .nav-links a.active { color:var(--text); background:rgba(255,255,255,.07); }
+    .nav-cta { background:var(--accent) !important; color:#fff !important; font-weight:500; }
+
+    .main { max-width:780px; margin:3rem auto; padding:0 1.5rem; }
+
+    /* Hero section */
+    .about-hero { text-align:center; padding:3rem 0 2.5rem; }
+    .project-badge { display:inline-flex; align-items:center; gap:.4rem; background:var(--accent-bg); color:var(--accent); font-size:.72rem; font-weight:600; letter-spacing:.09em; text-transform:uppercase; padding:.3rem .9rem; border-radius:100px; border:1px solid rgba(91,142,255,.2); margin-bottom:1.5rem; }
+    .about-hero h1 { font-family:'Space Grotesk',sans-serif; font-size:2.4rem; font-weight:700; letter-spacing:-.025em; margin-bottom:1rem; }
+    .about-hero h1 span { color:var(--accent); }
+    .about-hero p { font-size:1rem; color:var(--muted); max-width:520px; margin:0 auto; line-height:1.75; }
+
+    /* Context card */
+    .context-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:2rem; margin-bottom:1.5rem; }
+    .context-card h2 { font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; margin-bottom:1rem; }
+    .context-card p { font-size:.9rem; color:var(--muted); line-height:1.75; margin-bottom:.85rem; }
+    .context-card p:last-child { margin-bottom:0; }
+    .context-card strong { color:var(--text); font-weight:500; }
+
+    /* Stack pills */
+    .stack { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.25rem; }
+    .pill { background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:.3rem .75rem; font-size:.78rem; color:var(--muted); }
+    .pill.blue { background:var(--accent-bg); color:var(--accent); border-color:rgba(91,142,255,.2); }
+    .pill.teal { background:var(--teal-bg); color:var(--teal); border-color:rgba(46,207,173,.2); }
+    .pill.amber { background:rgba(245,166,35,.1); color:var(--amber); border-color:rgba(245,166,35,.2); }
+
+    /* Team */
+    .team-section { margin-bottom:1.5rem; }
+    .team-section h2 { font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; margin-bottom:1.25rem; color:var(--text); }
+    .team-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; }
+    .member { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:1.5rem 1.25rem; text-align:center; transition:border-color .2s; }
+    .member:hover { border-color:var(--border-h); }
+    .avatar { width:54px; height:54px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk',sans-serif; font-size:1.2rem; font-weight:700; margin:0 auto 1rem; }
+    .av-blue  { background:var(--accent-bg); color:var(--accent); }
+    .av-teal  { background:var(--teal-bg); color:var(--teal); }
+    .av-amber { background:rgba(245,166,35,.1); color:var(--amber); }
+    .av-pink  { background:rgba(255,91,188,.1); color:#ff5bbc; }
+    .member-name { font-family:'Space Grotesk',sans-serif; font-weight:600; font-size:.95rem; margin-bottom:.25rem; }
+    .member-role { font-size:.78rem; color:var(--muted); }
+
+    /* G7 banner */
+    .g7-banner { background:var(--surface); border:1px solid rgba(245,166,35,.2); border-radius:16px; padding:1.75rem; display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem; flex-wrap:wrap; }
+    .g7-num { font-family:'Space Grotesk',sans-serif; font-size:3rem; font-weight:700; color:var(--amber); letter-spacing:-.04em; flex-shrink:0; }
+    .g7-text h3 { font-family:'Space Grotesk',sans-serif; font-weight:600; margin-bottom:.3rem; }
+    .g7-text p { font-size:.875rem; color:var(--muted); line-height:1.65; }
+
+    footer { border-top:1px solid var(--border); padding:1.75rem 2.5rem; text-align:center; font-size:.78rem; color:var(--muted); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Inflatio<span>Convert</span></a>
+  <div class="nav-links">
+    <a href="index.html">Accueil</a>
+    <a href="converter.html">Convertisseur</a>
+    <a href="inflation.html">Historique BCE</a>
+    <a href="about.html" class="active">À propos</a>
+    <a href="converter.html" class="nav-cta">Convertir →</a>
+  </div>
+</nav>
+
+<div class="main">
+
+  <div class="about-hero">
+    <div class="project-badge">✦ Projet CSIG 2026</div>
+    <h1>À propos d'<span>InflatioConvert</span></h1>
+    <p>Une application web full-stack déployée sur Microsoft Azure, conçue dans le cadre du cours CSIG.</p>
+  </div>
+
+  <div class="g7-banner">
+    <div class="g7-num">G7</div>
+    <div class="g7-text">
+      <h3>Groupe 7 — CSIG</h3>
+      <p>Ce projet a été réalisé par le groupe 7 du cours CSIG dans le cadre d'un déploiement cloud sur Microsoft Azure avec Node.js, Express et MongoDB.</p>
+    </div>
+  </div>
+
+  <div class="team-section">
+    <h2>L'équipe</h2>
+    <div class="team-grid">
+      <div class="member">
+        <div class="avatar av-blue">RA</div>
+        <div class="member-name">Romuald</div>
+        <div class="member-role">Développement & Architecture</div>
+      </div>
+      <div class="member">
+        <div class="avatar av-teal">A</div>
+        <div class="member-name">Alex</div>
+        <div class="member-role">Frontend & Intégration</div>
+      </div>
+      <div class="member">
+        <div class="avatar av-amber">T</div>
+        <div class="member-name">Tristan</div>
+        <div class="member-role">Backend & Base de données</div>
+      </div>
+      <div class="member">
+        <div class="avatar av-pink">E</div>
+        <div class="member-name">Émile</div>
+        <div class="member-role">Déploiement Azure & DevOps</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="context-card">
+    <h2>Le projet</h2>
+    <p><strong>InflatioConvert</strong> est une application web de conversion de devises enrichie d'une dimension économique : l'historique de l'inflation en zone euro depuis 1991, basé sur les données officielles IPCH de la <strong>Banque Centrale Européenne</strong> (BCE) via Eurostat.</p>
+    <p>L'application intègre l'<strong>API Claude d'Anthropic</strong> pour générer des analyses économiques contextualisées sur chaque conversion ou période d'inflation sélectionnée.</p>
+    <p>Le déploiement est réalisé sur <strong>Microsoft Azure</strong> à l'aide d'un Codespace GitHub connecté à un conteneur Node.js/Express avec une base MongoDB pour la persistance des données.</p>
+    <div class="stack">
+      <span class="pill blue">Node.js</span>
+      <span class="pill blue">Express.js</span>
+      <span class="pill teal">MongoDB</span>
+      <span class="pill teal">Microsoft Azure</span>
+      <span class="pill amber">Claude API (Anthropic)</span>
+      <span class="pill">BCE / Eurostat IPCH</span>
+      <span class="pill">GitHub Codespaces</span>
+      <span class="pill">Chart.js</span>
+    </div>
+  </div>
+
+  <div class="context-card">
+    <h2>Sources des données</h2>
+    <p>Les taux d'inflation sont issus de la série officielle <strong>IPCH (Indice des Prix à la Consommation Harmonisé)</strong> publiée par Eurostat et la BCE, code de série <strong>prc_hicp_ainr</strong>. Ces données couvrent la zone euro de 1991 à 2025 et sont mises à jour annuellement.</p>
+    <p>Les taux de change affichés dans le convertisseur sont des estimations générées par IA à titre indicatif et <strong>ne constituent pas des données financières certifiées</strong>. Pour des opérations financières réelles, consultez un prestataire de services de change agréé.</p>
+  </div>
+
+</div>
+
+<footer>© 2026 InflatioConvert — Projet CSIG · G7 (Romuald, Alex, Tristan, Émile) · Données : BCE / Eurostat IPCH</footer>
+
+</body>
+</html>
