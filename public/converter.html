@@ -178,23 +178,27 @@ document.getElementById("convertBtn").addEventListener("click",async()=>{
   }
   btn.disabled=true; btn.innerHTML='<span class="spin"></span>Conversion en cours…';
   try {
-    const prompt=`Tu es un expert en change financier. L'utilisateur veut convertir ${amount} ${from} en ${to}.
-Réponds UNIQUEMENT avec un objet JSON valide, sans texte avant ou après, sans backticks :
-{"rate":<taux flottant>,"result":<résultat flottant>,"analysis":"<2-3 phrases en français sur le contexte économique de cette paire, sa tendance récente et un conseil pratique>"}
-Utilise les taux de change approximatifs de 2025-2026. result = ${amount} * rate.`;
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:prompt}]})});
-    const data=await resp.json();
-    const raw=data.content.map(b=>b.text||"").join("");
-    const parsed=JSON.parse(raw.replace(/```json|```/g,"").trim());
-    const {rate,result,analysis}=parsed;
-    document.getElementById("rAmt").textContent=parseFloat(result).toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:4})+" "+to;
-    document.getElementById("rRate").innerHTML=`Taux : <strong>1 ${from} = ${parseFloat(rate).toFixed(6)} ${to}</strong>`;
+    // API gratuite open.er-api.com — pas de clé, CORS activé, mise à jour quotidienne
+    const resp = await fetch(`https://open.er-api.com/v6/latest/${from}`);
+    if(!resp.ok) throw new Error("Service de taux indisponible (HTTP "+resp.status+")");
+    const data = await resp.json();
+    if(data.result !== "success") throw new Error("Réponse invalide de l'API de taux.");
+
+    const rate = data.rates[to];
+    if(!rate) throw new Error(`Devise cible "${to}" non disponible.`);
+    const result = amount * rate;
+
+    document.getElementById("rAmt").textContent=result.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:4})+" "+to;
+    document.getElementById("rRate").innerHTML=`Taux : <strong>1 ${from} = ${rate.toFixed(6)} ${to}</strong> · <span style="font-size:.78rem">Mis à jour le ${new Date(data.time_last_update_utc).toLocaleDateString('fr-FR')}</span>`;
     rc.classList.add("show");
-    document.getElementById("aiTxt").innerHTML=analysis.replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+    // Note source dans la carte IA
+    document.getElementById("aiTxt").innerHTML=`Taux réel fourni par <strong>ExchangeRate-API</strong> (open.er-api.com) — données des marchés, mises à jour quotidiennement.<br><br>1&nbsp;${from}&nbsp;= <strong>${rate.toFixed(6)}&nbsp;${to}</strong>. Pour ${amount.toLocaleString('fr-FR')}&nbsp;${from}, vous obtenez <strong>${result.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})}&nbsp;${to}</strong>.`;
     ac.classList.add("show");
-    history.push({amount,from,to,result:parseFloat(result)}); render();
+
+    history.push({amount,from,to,result}); render();
   } catch(e) {
-    err.textContent="Erreur : "+(e.message||"Impossible de contacter le service IA.");
+    err.textContent="Erreur : "+(e.message||"Impossible de récupérer les taux.");
     err.classList.add("show");
   } finally {
     btn.disabled=false; btn.textContent="Convertir";
