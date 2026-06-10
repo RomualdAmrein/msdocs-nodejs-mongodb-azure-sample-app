@@ -85,3 +85,5 @@ async function getApp() {
 module.exports = {
   getApp
 };
+
+app.use(express.static('public'));
