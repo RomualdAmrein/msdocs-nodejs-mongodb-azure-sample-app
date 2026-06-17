@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "pg": "^8.11.3",
     "bootstrap": "^5.3.3",
     "cookie-parser": "~1.4.6",
     "date-fns": "^4.1.0",

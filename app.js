@@ -1,6 +1,5 @@
 var createError = require("http-errors");
 var express = require("express");
-var mongoose = require("mongoose");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
@@ -8,18 +7,18 @@ const { format } = require("date-fns");
 
 // 1st party dependencies
 var indexRouter = require("./routes/index");
+var apiRouter = require("./routes/api");
+const { initInflationTable } = require("./models/db");
 
 async function getApp() {
 
   // Database
-  // Use AZURE_COSMOS_CONNECTIONSTRING if available, otherwise fall back to MONGODB_URI
-  const mongoUri = process.env.MONGODB_URI; // For App Service, change to process.env.AZURE_COSMOS_CONNECTIONSTRING || process.env.MONGODB_URI;
-
-  mongoose.connect(mongoUri).then(() => {
-    console.log('Connected to database');
-  }).catch((err) => {
-    console.error('Error connecting to database:', err);
-  });
+  try {
+    await initInflationTable();
+    console.log('Connecté à PostgreSQL, table inflation_history prête');
+  } catch (err) {
+    console.error('Erreur de connexion à PostgreSQL :', err);
+  }
 
   var app = express();
 
@@ -39,6 +38,7 @@ async function getApp() {
   app.locals.format = format;
 
   app.use("/", indexRouter);
+  app.use("/api", apiRouter);
   app.use("/js", express.static(__dirname + "/node_modules/bootstrap/dist/js")); // redirect bootstrap JS
   app.use(
     "/css",
@@ -67,7 +67,7 @@ async function getApp() {
  * Normalize a port into a number, string, or false.
  */
 
- function normalizePort(val) {
+function normalizePort(val) {
   var port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -85,5 +85,3 @@ async function getApp() {
 module.exports = {
   getApp
 };
-
-
