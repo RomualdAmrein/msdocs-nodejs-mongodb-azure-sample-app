@@ -110,12 +110,6 @@
     <div id="result" class="result-placeholder">Choisis un montant et deux années, puis clique sur « Calculer ».</div>
   </div>
 
-  <div class="examples">
-    <span class="examples-label">Exemples rapides :</span>
-    <button class="example-btn" data-amount="100" data-from="2001" data-to="2025">100 € en 2001 → 2025</button>
-    <button class="example-btn" data-amount="400000" data-from="1995" data-to="2025">Maison à 400 000 € en 1995 → 2025</button>
-  </div>
-
   <p class="note">Le calcul chaîne les taux d'inflation annuels (IPCH, zone euro) pour reconstruire un indice cumulé entre deux années. Les données de 1996 à 2025 proviennent de l'API officielle Eurostat ; les années 1991-1995 sont des estimations non vérifiées par une source officielle.</p>
 </div>
 
@@ -164,16 +158,6 @@
       <div class="result-sub">Soit ${sign}${pct.toFixed(1)} % cumulés entre ${from} et ${to}.</div>
     `;
   }
-
-  document.getElementById("calcBtn").addEventListener("click", compute);
-  document.querySelectorAll(".example-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.getElementById("amount").value = btn.dataset.amount;
-      fromSel.value = btn.dataset.from;
-      toSel.value = btn.dataset.to;
-      compute();
-    });
-  });
 
   compute();
 })();
