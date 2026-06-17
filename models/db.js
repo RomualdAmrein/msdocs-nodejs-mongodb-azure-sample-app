@@ -68,4 +68,31 @@ async function initInflationTable() {
   }
 }
 
-module.exports = { pool, initInflationTable };
+async function refreshFromEurostat() {
+  const url = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/prc_hicp_ainr?format=JSON&lang=EN&geo=EA&coicop18=TOTAL";
+  const resp = await fetch(url);
+  const json = await resp.json();
+
+  const years = Object.keys(json.dimension.time.category.index)
+    .sort((a, b) => json.dimension.time.category.index[a] - json.dimension.time.category.index[b]);
+  const nbYears = years.length;
+  const rateUnitIndex = json.dimension.unit.category.index["RCH_A_AVG"];
+
+  let updated = 0;
+  for (let t = 0; t < nbYears; t++) {
+    const flatIndex = rateUnitIndex * nbYears + t;
+    const rate = json.value[String(flatIndex)];
+    if (rate === undefined) continue;
+    const year = parseInt(years[t], 10);
+    await pool.query(
+      `INSERT INTO inflation_history (year, rate, event)
+       VALUES ($1, $2, '')
+       ON CONFLICT (year) DO UPDATE SET rate = EXCLUDED.rate`,
+      [year, rate]
+    );
+    updated++;
+  }
+  return updated;
+}
+
+module.exports = { pool, initInflationTable, refreshFromEurostat };
