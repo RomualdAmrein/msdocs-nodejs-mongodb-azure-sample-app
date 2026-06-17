@@ -128,22 +128,6 @@
     </div>
   </div>
 
-  <div class="ai-section">
-    <div class="ai-head">
-      <span class="ai-badge">✦ Analyse IA par période</span>
-      <span style="font-size:.8rem;color:var(--muted)">Choisissez une période pour obtenir un commentaire économique</span>
-    </div>
-    <div class="ai-controls">
-      <button class="period-btn sel" data-start="1991" data-end="2000">1991–2000</button>
-      <button class="period-btn" data-start="2001" data-end="2010">2001–2010</button>
-      <button class="period-btn" data-start="2011" data-end="2019">2011–2019</button>
-      <button class="period-btn" data-start="2020" data-end="2025">2020–2025</button>
-      <button class="period-btn" data-start="1991" data-end="2025">Tout 1991–2025</button>
-      <button class="ai-ask-btn" id="aiBtn">Analyser cette période</button>
-    </div>
-    <div class="ai-result" id="aiResult">Sélectionnez une période et cliquez sur "Analyser".</div>
-  </div>
-
   <div class="timeline-card">
     <div class="tl-title">Tableau détaillé 1991–2025</div>
     <div class="tl-scroll">
@@ -237,41 +221,6 @@ tbody.innerHTML=DATA.slice().reverse().map(d=>{
     <td class="event-cell">${d.event}</td>
   </tr>`;
 }).join("");
-
-// Période sélection
-let selStart=1991, selEnd=2000;
-document.querySelectorAll(".period-btn[data-start]").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".period-btn[data-start]").forEach(b=>b.classList.remove("sel"));
-    btn.classList.add("sel");
-    selStart=parseInt(btn.dataset.start); selEnd=parseInt(btn.dataset.end);
-  });
-});
-
-// IA Analyse
-document.getElementById("aiBtn").addEventListener("click",async()=>{
-  const period=DATA.filter(d=>d.year>=selStart&&d.year<=selEnd);
-  if(!period.length) return;
-  const avgP=(period.reduce((s,d)=>s+d.rate,0)/period.length).toFixed(2);
-  const maxP=period.reduce((a,b)=>a.rate>b.rate?a:b);
-  const minP=period.reduce((a,b)=>a.rate<b.rate?a:b);
-  const btn=document.getElementById("aiBtn"), res=document.getElementById("aiResult");
-  btn.disabled=true; btn.innerHTML='<span class="spin"></span>Analyse…';
-  res.innerHTML='<span class="spin"></span>Génération du commentaire…';
-  try {
-    const summary=period.map(d=>`${d.year}:${d.rate}%`).join(", ");
-    const prompt=`Tu es un économiste spécialisé en politique monétaire européenne. Voici les données d'inflation IPCH de la zone euro pour la période ${selStart}–${selEnd} : ${summary}.
-Rédige en 4-5 phrases en français un commentaire analytique couvrant : les grandes tendances, les événements clés ayant influencé l'inflation, le comportement de la BCE et ce que cette période révèle sur la stabilité monétaire européenne. Sois précis, pédagogique, avec un ton académique accessible.`;
-    const resp=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:prompt}]})});
-    const data=await resp.json();
-    const text=data.content.map(b=>b.text||"").join("");
-    res.innerHTML=`<strong>${selStart}–${selEnd}</strong> · Moy. ${avgP}% · Max ${maxP.rate}% (${maxP.year}) · Min ${minP.rate}% (${minP.year})<br><br>${text.replace(/</g,"&lt;").replace(/>/g,"&gt;")}`;
-  } catch(e) {
-    res.textContent="Erreur : impossible de contacter le service IA.";
-  } finally {
-    btn.disabled=false; btn.textContent="Analyser cette période";
-  }
-});
 
 })();
 </script>
